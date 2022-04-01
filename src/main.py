@@ -12,4 +12,4 @@ if __name__=="__main__":
     if outputFilePath==None:
         messagebox.showerror("File error","No path specified")
         exit(-1)
-    greyscale.convertToGreyscale(inputFilePath,outputFilePath.name)
+    greyscale.convertToGreyscale(inputFilePath,outputFilePath.name,compress=True)
