@@ -1,4 +1,3 @@
-from sys import stderr
 import cv2
 import ffmpeg
 from typing import List
