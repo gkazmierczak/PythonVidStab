@@ -83,7 +83,9 @@ def track(capture, bbox, mode, display=False):
 
             # exit if ESC pressed
             k = cv2.waitKey(1) & 0xff
-            if k == 27: break
+            if k == 27:
+                break
+
     cv2.destroyAllWindows()
     return trackingData
 
@@ -164,9 +166,3 @@ def trackMultiple(capture, bboxes, mode, display=False):
             if k == 27: break
     cv2.destroyAllWindows()
     return trackingData
-
-
-inputFilePath = askopenfilename(title="Select file to convert")
-capture = cv2.VideoCapture(inputFilePath)
-# track(capture, selectSingleBoundingBox(capture), 'CSRT', True)
-data = trackMultiple(capture, selectMultipleBoundingBoxes(capture), "CSRT", display=True)
