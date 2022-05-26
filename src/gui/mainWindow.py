@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
         self.show()
 
     def _selectFile(self):
-        self.inputFilePath ,_= QFileDialog.getOpenFileName(self,"Select file","","All Files (*)")
+        self.inputFilePath ,_= QFileDialog.getOpenFileName(self,"Select file","","Movie files (*.mp4 *.avi *.wmv *.mov *.mkv)")
         if self.inputFilePath!="":
             self.startConfigScreen()
     
@@ -60,13 +60,9 @@ class MainWindow(QMainWindow):
         self.videoCapture=videoUtils.createVideoCapture(self.inputFilePath)
         videoFrames=videoUtils.videoToFrameList(self.videoCapture)
         if isManualEnabled:
-            #TODO: manual roi selection
             self.tracker=Tracker(videoFrames)
             if self.tracker.bbox!=(0,0,0,0):
-                self.stabilizeFile()
-            else:
-                # ERROR 
-                None
+                self.stabilizeFile(self.configScreen.radiusSlider.value())
   
         else:
             #TODO: ai object detection then roi selection
@@ -79,17 +75,15 @@ class MainWindow(QMainWindow):
             if radio.isChecked():
                 return modes[i]
 
-    def stabilizeFile(self):
+    def stabilizeFile(self,radius):
         self.startLoadingScreen()
         self.outputOptions={
             'audio': self.configScreen.cbAudio.isChecked(),
             'greyscale':self.configScreen.cbGreyscale.isChecked(),
-            'compress':self.configScreen.cbCompress.isChecked()
+            'compress':self.configScreen.cbCompress.isChecked(),
+            'plots':self.configScreen.cbPlots.isChecked()
         }
-        # th = threading.Thread(target=self._handleStabilization)
-        # th.start()
-        # th.join()
-        self.worker=Worker(self.tracker,self._getTrackingMode())
+        self.worker=Worker(self.tracker,self._getTrackingMode(),radius,self.outputOptions['plots'])
         self.worker.start()
         self.worker.started_tracking.connect(self._startedTracking)
         self.worker.started_stabilizing.connect(self._startedStabilizing)
@@ -142,30 +136,6 @@ class MainWindow(QMainWindow):
         self.loadingScreen.btnCancel.clicked.connect(self.returnToTitleScreen)
         self.show()   
 
-    # def _handleTracking(self):
-    #     self.loadingScreen.appendText("Tracking...")
-    #     trackingMode=self._getTrackingMode()
-    #     self.tracker.trackingData=self.tracker.track(trackingMode,False)
-    #     self.loadingScreen.appendText("Tracking completed.")
-
-
-    # def _handleStabilization(self):
-    #     th = threading.Thread(target=self._handleTracking)
-    #     th.start()
-    #     th.join()
-    #     # self._handleTracking()
-    #     # trackingMode=self._getTrackingMode()
-    #     # trackingData=self.tracker.track(trackingMode,False)
-    #     try:
-    #         self.loadingScreen.appendText("Stabilizing...")
-    #         # self.loadingScreen.appendText(str(self.tracker.trackingData))
-    #         self.stabilizer = Stabilizer(self.videoFrames, self.tracker.trackingData)
-    #         self.stabilizer.stabilize()
-    #         self.loadingScreen.appendText("Stabilization completed.")
-
-    #     except Exception as e:
-    #         self.loadingScreen.appendText("ERROR: "+str(e))
-
 
 class Worker(QThread):
     started_tracking = pyqtSignal()
@@ -173,10 +143,12 @@ class Worker(QThread):
     started_stabilizing = pyqtSignal()
     finished_stabilizing = pyqtSignal()
     err_sig=pyqtSignal(str)
-    def __init__(self, tracker,trackingMode):
+    def __init__(self, tracker,trackingMode,smoothingRadius,generatePlots):
         super(QThread, self).__init__()
         self.tracker = tracker
         self.trackingMode=trackingMode
+        self.smoothingRadius=smoothingRadius
+        self.generatePlots=generatePlots
         
     def run(self):
         try:
@@ -185,7 +157,7 @@ class Worker(QThread):
             self.finished_tracking.emit()
             self.started_stabilizing.emit()
             self.stabilizer = Stabilizer(self.tracker.frames, self.tracker.trackingData)
-            self.stabilizer.stabilize()
+            self.stabilizer.stabilize(self.smoothingRadius,self.generatePlots)
             self.finished_stabilizing.emit()
         except Exception as e:
             self.err_sig.emit(str(e))

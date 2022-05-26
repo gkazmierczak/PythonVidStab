@@ -11,7 +11,7 @@ class Stabilizer:
             raise Exception("Length of tracker data should be equal number of frames")
         self.n = len(self.frames)
 
-    def stabilize(self,generatePlots=False):
+    def stabilize(self,smoothingRadius=30,generatePlots=False):
         width = self.frames[0].shape[1]
         height = self.frames[0].shape[0]
 
@@ -21,7 +21,7 @@ class Stabilizer:
         if generatePlots:
             plt.plot([x[0] for x in trajectory], [x[1] for x in trajectory], marker='.', color='r')
 
-        self.trajectory_smooth(trajectory, 20)
+        self.trajectory_smooth(trajectory, smoothingRadius)
 
         if generatePlots:
             plt.plot([x[0] for x in trajectory], [x[1] for x in trajectory], marker='.', color='g')

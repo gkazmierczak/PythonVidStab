@@ -6,7 +6,6 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from turtle import position
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -27,7 +26,8 @@ class ConfigScreen(object):
         self.gbOptions = QtWidgets.QGroupBox(self.centralwidget)
         self.gbOptions.setGeometry(QtCore.QRect(1080, 0, 191, 341))
         self.gbOptions.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                     "background-color: rgb(0, 29, 61);")
+                                     "border: 0px;"
+                                     "background-color: rgb(0, 8, 20);")
         self.gbOptions.setTitle("")
         self.gbOptions.setAlignment(QtCore.Qt.AlignCenter)
         self.gbOptions.setObjectName("gbOptions")
@@ -39,16 +39,44 @@ class ConfigScreen(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.cbAudio = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.cbAudio.setObjectName("cbAudio")
+        self.cbAudio.setStyleSheet("margin-left:50px")
         self.cbAudio.setChecked(False)
         self.verticalLayout.addWidget(self.cbAudio)
         self.cbGreyscale = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.cbGreyscale.setObjectName("cbGreyscale")
+        self.cbGreyscale.setStyleSheet("margin-left:50px")
+
         self.cbGreyscale.setChecked(False)
         self.verticalLayout.addWidget(self.cbGreyscale)
         self.cbCompress = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.cbCompress.setObjectName("cbCompress")
+        self.cbCompress.setText("Compress output")
+        self.cbCompress.setStyleSheet("margin-left:50px")
         self.cbCompress.setChecked(False)
         self.verticalLayout.addWidget(self.cbCompress)
+        self.cbPlots = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.cbPlots.setObjectName("cbPlots")
+        self.cbPlots.setText("Generate trajectory plots")
+        self.cbPlots.setStyleSheet("margin-left:50px")
+        self.cbPlots.setChecked(False)
+        self.verticalLayout.addWidget(self.cbPlots)
+        self.radiusFrame=QtWidgets.QFrame(self.verticalLayoutWidget)
+        self.radiusFrame.setFixedHeight(200)
+        self.radiusSlider = QtWidgets.QSlider(self.radiusFrame)
+        self.radiusSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.radiusSlider.setObjectName("radiusSlider")
+        self.radiusSlider.setGeometry(20,40,160,30)
+        self.radiusSlider.setRange(5,50)
+        self.radiusSlider.setValue(30)
+        self.lRadius=QtWidgets.QLabel(self.radiusFrame)
+        self.lRadius.setAlignment(QtCore.Qt.AlignCenter)
+        self.lRadius.setGeometry(0,0,200,30)
+        self.lRadius.setText("Smoothing radius: "+str(self.radiusSlider.value()))
+        self.lRadius.setStyleSheet("color: rgb(255, 255, 255);""font: 12pt \"MS Shell Dlg 2\";")
+        self.lRadius.setMargin(0)
+        self.radiusSlider.valueChanged.connect(self._updateRadius)
+        self.verticalLayout.addWidget(self.radiusFrame)    
+
 
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(320, -1, 641, 381))
@@ -231,6 +259,9 @@ class ConfigScreen(object):
             _translate("MainWindow", "Manual Selection"))
         self.radioAIObjectDetection.setText(
             _translate("MainWindow", "AI Object Detection"))
+
+    def _updateRadius(self,radius):
+        self.lRadius.setText("Smoothing radius: "+str(radius))
 
     def _setMedia(self):
         self.mediaPlayer.setMedia(QMediaContent(
