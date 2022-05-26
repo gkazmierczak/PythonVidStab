@@ -6,6 +6,7 @@ class Tracker:
     def __init__(self, frames):
         self.frames = frames
         self.bbox = self.select_single_bounding_box(0)
+        print(self.bbox)
 
     def select_single_bounding_box(self, frame):
         """
@@ -18,7 +19,6 @@ class Tracker:
 
         if not frame < len(self.frames) or frame < 0:
             raise Exception("Wrong frame number")
-
         bbox = cv2.selectROI(self.frames[frame], False)
         cv2.destroyAllWindows()
         return bbox
@@ -40,7 +40,7 @@ class Tracker:
             print("Specified tracking mode not found. Using KCF instead.")
             mode = 'KCF'
         if mode == 'MOSSE':
-            tracker = cv2.TrackerMOSSE_create()
+            tracker = cv2.legacy.TrackerMOSSE_create()
         elif mode == 'CSRT':
             tracker = cv2.TrackerCSRT_create()
         else:

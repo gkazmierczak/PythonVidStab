@@ -87,7 +87,7 @@ class ConfigScreen(object):
                                         "border: 1px solid rgb(255, 214, 10);")
         self.btnSelect.setObjectName("btnSelect")
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(259, 385, 791, 251))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(340, 385, 600, 251))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -119,7 +119,7 @@ class ConfigScreen(object):
         self.gbTracker.setAlignment(QtCore.Qt.AlignCenter)
         self.gbTracker.setObjectName("gbTracker")
         self.widget = QtWidgets.QWidget(self.gbTracker)
-        self.widget.setGeometry(QtCore.QRect(210, 4, 387, 61))
+        self.widget.setGeometry(QtCore.QRect(110, 4, 387, 61))
         self.widget.setObjectName("widget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -127,6 +127,7 @@ class ConfigScreen(object):
         self.radioCSRT = QtWidgets.QRadioButton(self.widget)
         self.radioCSRT.setStyleSheet("padding-right: 10px;")
         self.radioCSRT.setObjectName("radioCSRT")
+        self.radioCSRT.setChecked(True)
         self.horizontalLayout_2.addWidget(self.radioCSRT)
         self.radioKCF = QtWidgets.QRadioButton(self.widget)
         self.radioKCF.setStyleSheet(
@@ -153,12 +154,13 @@ class ConfigScreen(object):
         self.gbMode.setAlignment(QtCore.Qt.AlignCenter)
         self.gbMode.setObjectName("gbMode")
         self.widget1 = QtWidgets.QWidget(self.gbMode)
-        self.widget1.setGeometry(QtCore.QRect(210, 10, 420, 47))
+        self.widget1.setGeometry(QtCore.QRect(90, 10, 420, 47))
         self.widget1.setObjectName("widget1")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget1)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.radioManualObjectSelection = QtWidgets.QRadioButton(self.widget1)
+        self.radioManualObjectSelection.setChecked(True)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -237,7 +239,8 @@ class ConfigScreen(object):
             self.mediaPlayer.play()
 
     def _stop(self):
-        self.mediaPlayer.stop()
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.mediaPlayer.stop()
 
     def _mediaStateChanged(self, state):
         # TODO: Icon change
