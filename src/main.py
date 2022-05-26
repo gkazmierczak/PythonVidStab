@@ -32,13 +32,14 @@ if __name__ == "__main__":
 
     tracker = Tracker(frames)
 
-    data = tracker.track('CSRT', False)
+    data = tracker.track('KCF', True)
     print("LEN: ", len(data))
+    [print(x) for x in data]
 
     stabilizer = Stabilizer(frames, data)
-    stabilizer.stabilize()
-    print(frames[0].shape)
+    stabilizer.stabilize(generate_plots=True)
+    print("FRAMES:")
+    [print(x) for x in frames]
 
     # data = tracking.track(capture, tracking.selectSingleBoundingBox(capture), 'CSRT', True)
     converter.writeVideoToFile(output_file_path.name, frames, framerate, True)
-

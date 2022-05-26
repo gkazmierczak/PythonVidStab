@@ -11,21 +11,29 @@ class Stabilizer:
             raise Exception("Length of tracker data should be equal number of frames")
         self.n = len(self.frames)
 
-    def stabilize(self,smoothingRadius=30,generatePlots=False):
+    def stabilize(self,smoothingRadius=30, generate_plots=False):
         width = self.frames[0].shape[1]
         height = self.frames[0].shape[0]
 
         trajectory = np.array([[int(bbox[0] + bbox[2] / 2), int(bbox[1] + bbox[3] / 2)] for bbox in self.data])
-        # print(trajectory)
 
-        if generatePlots:
+        non_zero = trajectory[0]
+        for i in range(1, len(trajectory)):
+            if trajectory[i][0] == 0 and trajectory[i][1] == 0:
+                trajectory[i] = non_zero
+            else:
+                non_zero = trajectory[i]
+
+        if generate_plots:
+            plt.subplot(2, 1, 1)
             plt.plot([x[0] for x in trajectory], [x[1] for x in trajectory], marker='.', color='r')
 
         self.trajectory_smooth(trajectory, smoothingRadius)
 
-        if generatePlots:
+        if generate_plots:
+            plt.subplot(2, 1, 2)
             plt.plot([x[0] for x in trajectory], [x[1] for x in trajectory], marker='.', color='g')
-            plt.savefig("after.png")
+            plt.savefig("trajectory_smooth.png")
 
         margin_x = min(np.min(trajectory[:, 0]), np.min(width - trajectory[:, 0])) - 1
         margin_y = min(np.min(trajectory[:, 1]), np.min(height - trajectory[:, 1])) - 1
