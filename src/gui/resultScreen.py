@@ -15,9 +15,11 @@ from PyQt5.QtCore import QDir, Qt, QUrl
 from PyQt5.QtWidgets import QStyle
 from utils import durationFromMs
 
+
 class ResultScreen(object):
     videoPath = None
-    playbackPausedBySliderEvent=False
+    playbackPausedBySliderEvent = False
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
@@ -27,7 +29,7 @@ class ResultScreen(object):
         self.lStatus = QtWidgets.QLabel(self.centralwidget)
         self.lStatus.setGeometry(QtCore.QRect(415, 20, 451, 40))
         self.lStatus.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: 24pt \"MS Shell Dlg 2\";")
+                                   "font: 24pt \"MS Shell Dlg 2\";")
         self.lStatus.setAlignment(QtCore.Qt.AlignCenter)
         self.lStatus.setObjectName("lStatus")
         self.frame = QtWidgets.QFrame(self.centralwidget)
@@ -62,9 +64,9 @@ class ResultScreen(object):
         self.btnRestart = QtWidgets.QPushButton(self.centralwidget)
         self.btnRestart.setGeometry(QtCore.QRect(460, 520, 130, 40))
         self.btnRestart.setStyleSheet("background-color: rgb(0, 29, 61);\n"
-"border: 1px solid rgb(255, 195, 0);\n"
-"color: rgb(255, 195, 0);\n"
-"font: 20pt \"MS Shell Dlg 2\";")
+                                      "border: 1px solid rgb(255, 195, 0);\n"
+                                      "color: rgb(255, 195, 0);\n"
+                                      "font: 20pt \"MS Shell Dlg 2\";")
         self.btnRestart.setObjectName("btnRestart")
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(970, 400, 300, 300))
@@ -77,9 +79,9 @@ class ResultScreen(object):
         self.btnClose = QtWidgets.QPushButton(self.centralwidget)
         self.btnClose.setGeometry(QtCore.QRect(690, 520, 90, 40))
         self.btnClose.setStyleSheet("background-color: rgb(0, 29, 61);\n"
-"border: 1px solid rgb(255, 195, 0);\n"
-"color: rgb(255, 195, 0);\n"
-"font: 20pt \"MS Shell Dlg 2\";")
+                                    "border: 1px solid rgb(255, 195, 0);\n"
+                                    "color: rgb(255, 195, 0);\n"
+                                    "font: 20pt \"MS Shell Dlg 2\";")
         self.btnClose.setObjectName("btnClose")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -136,7 +138,6 @@ class ResultScreen(object):
         else:
             self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPlay))
 
-
     def _positionChanged(self, position):
         self.positionSlider.blockSignals(True)
         self.positionSlider.setValue(position)
@@ -163,8 +164,10 @@ class ResultScreen(object):
         if self.playbackPausedBySliderEvent:
             self.mediaPlayer.play()
 
+
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = ResultScreen()

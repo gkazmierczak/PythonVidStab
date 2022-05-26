@@ -7,6 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+
 class TitleScreen(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -35,9 +37,9 @@ class TitleScreen(object):
         font.setPointSize(20)
         self.selectBtn.setFont(font)
         self.selectBtn.setStyleSheet("background-color: rgb(0, 29, 61);\n"
-"alternate-background-color: rgb(0, 53, 102);\n"
-"color: rgb(255, 195, 0);\n"
-"border-color: rgb(255, 195, 0);")
+                                     "alternate-background-color: rgb(0, 53, 102);\n"
+                                     "color: rgb(255, 195, 0);\n"
+                                     "border-color: rgb(255, 195, 0);")
         self.selectBtn.setObjectName("selectBtn")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -57,16 +59,14 @@ class TitleScreen(object):
         self.labelStart.setText(_translate("MainWindow", "Python Video Stabilization Project"))
         self.labelStatus.setText(_translate("MainWindow", "Please select a file to begin"))
         self.selectBtn.setText(_translate("MainWindow", "Select File"))
-    
-
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = TitleScreen()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

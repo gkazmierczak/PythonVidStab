@@ -17,7 +17,8 @@ from utils import durationFromMs
 
 class ConfigScreen(object):
     videoPath = None
-    playbackPausedBySliderEvent=False
+    playbackPausedBySliderEvent = False
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
@@ -91,9 +92,9 @@ class ConfigScreen(object):
         self.btnSelect = QtWidgets.QPushButton(self.centralwidget)
         self.btnSelect.setGeometry(QtCore.QRect(550, 650, 220, 50))
         self.btnSelect.setStyleSheet("background-color: rgb(0, 29, 61);\n"
-                                        "font: 26pt \"MS Shell Dlg 2\";\n"
-                                        "color: rgb(255, 195, 0);\n"
-                                        "border: 1px solid rgb(255, 214, 10);")
+                                     "font: 26pt \"MS Shell Dlg 2\";\n"
+                                     "color: rgb(255, 195, 0);\n"
+                                     "border: 1px solid rgb(255, 214, 10);")
         self.btnSelect.setObjectName("btnSelect")
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(340, 385, 600, 251))
@@ -250,6 +251,7 @@ class ConfigScreen(object):
     def _stop(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.stop()
+
     def _forceStop(self):
         self.mediaPlayer.stop()
 
@@ -258,7 +260,6 @@ class ConfigScreen(object):
             self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPause))
         else:
             self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPlay))
-
 
     def _positionChanged(self, position):
         self.positionSlider.blockSignals(True)
@@ -289,6 +290,7 @@ class ConfigScreen(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = ConfigScreen()
