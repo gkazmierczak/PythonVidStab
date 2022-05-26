@@ -10,7 +10,8 @@ from loadingScreen import LoadingScreen
 from src.tracker import Tracker
 from src.stabilizer import Stabilizer
 import src.converter as videoUtils
-import threading
+import tempfile
+import shutil
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -32,13 +33,15 @@ class MainWindow(QMainWindow):
     def startResultScreen(self):
         self.resultScreen.videoPath=self.outputFilePath
         self.resultScreen.setupUi(self)
-        self.resultScreen.btnRestart.clicked.connect(self.returnToTitleScreen)
+        self.resultScreen.btnRestart.clicked.connect(self.closeResultScreen)
         self.resultScreen.btnClose.clicked.connect(self.close)
 
+    def closeResultScreen(self):
+        self.resultScreen._stop()
+        self.startTitleScreen()
 
     def returnToTitleScreen(self):
         self.configScreen._stop()
-        self.resultScreen._stop()
         self.startTitleScreen()
 
     def startTitleScreen(self):
@@ -52,6 +55,7 @@ class MainWindow(QMainWindow):
             self.startConfigScreen()
     
     def _roiSelection(self):
+        self.configScreen._forceStop()
         isManualEnabled=self.configScreen.radioManualObjectSelection.isChecked()
         self.videoCapture=videoUtils.createVideoCapture(self.inputFilePath)
         videoFrames=videoUtils.videoToFrameList(self.videoCapture)
@@ -77,6 +81,11 @@ class MainWindow(QMainWindow):
 
     def stabilizeFile(self):
         self.startLoadingScreen()
+        self.outputOptions={
+            'audio': self.configScreen.cbAudio.isChecked(),
+            'greyscale':self.configScreen.cbGreyscale.isChecked(),
+            'compress':self.configScreen.cbCompress.isChecked()
+        }
         # th = threading.Thread(target=self._handleStabilization)
         # th.start()
         # th.join()
@@ -102,7 +111,25 @@ class MainWindow(QMainWindow):
         self.outputFilePath=""
         while self.outputFilePath=="":
             self.outputFilePath ,_= QFileDialog.getSaveFileName(self,"Save file","","All Files (*)")
-        videoUtils.writeVideoToFile(self.outputFilePath, self.tracker.frames, self.videoCapture.get(cv2.CAP_PROP_FPS), True)
+
+        print(self.outputOptions)
+        if self.outputOptions['greyscale']:
+            videoUtils.convertFramesToGreyscale(self.tracker.frames)
+
+
+        if self.outputOptions['audio']:
+            tempdirPath = tempfile.mkdtemp()
+            tempfileName = tempdirPath + "\\tempfile.mp4"
+            videoUtils.writeVideoToFile(tempfileName, self.tracker.frames, self.videoCapture.get(cv2.CAP_PROP_FPS), iscolor=not self.outputOptions['greyscale'])
+            videoUtils.muxVideoAudio(tempfileName, self.inputFilePath, self.outputFilePath)
+            shutil.rmtree(tempdirPath)
+        else:
+            if self.outputOptions['compress']:
+                videoUtils.writeVideoToFile(self.outputFilePath, self.tracker.frames, self.videoCapture.get(cv2.CAP_PROP_FPS), not self.outputOptions['greyscale'])
+                videoUtils.repackVideo(self.outputFilePath)
+            else:
+                videoUtils.writeVideoToFile(self.outputFilePath, self.tracker.frames, self.videoCapture.get(cv2.CAP_PROP_FPS), not self.outputOptions['greyscale'])
+
         self.loadingScreen.appendText(f"Saved output as {self.outputFilePath}")
         self.startResultScreen()
 

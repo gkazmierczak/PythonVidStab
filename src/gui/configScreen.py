@@ -11,6 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import QDir, Qt, QUrl
+from PyQt5.QtWidgets import QStyle
 from utils import durationFromMs
 
 
@@ -36,12 +37,18 @@ class ConfigScreen(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
-        self.checkBox_2.setObjectName("checkBox_2")
-        self.verticalLayout.addWidget(self.checkBox_2)
-        self.checkBox = QtWidgets.QCheckBox(self.verticalLayoutWidget)
-        self.checkBox.setObjectName("checkBox")
-        self.verticalLayout.addWidget(self.checkBox)
+        self.cbAudio = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.cbAudio.setObjectName("cbAudio")
+        self.cbAudio.setChecked(False)
+        self.verticalLayout.addWidget(self.cbAudio)
+        self.cbGreyscale = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.cbGreyscale.setObjectName("cbGreyscale")
+        self.cbGreyscale.setChecked(False)
+        self.verticalLayout.addWidget(self.cbGreyscale)
+        self.cbCompress = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.cbCompress.setObjectName("cbCompress")
+        self.cbCompress.setChecked(False)
+        self.verticalLayout.addWidget(self.cbCompress)
 
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(320, -1, 641, 381))
@@ -58,9 +65,11 @@ class ConfigScreen(object):
         self.positionSlider.setObjectName("horizontalSlider")
         self.btnPlay = QtWidgets.QPushButton(self.frame)
         self.btnPlay.setGeometry(QtCore.QRect(0, 360, 24, 24))
-        self.btnPlay.setStyleSheet("background-color: rgb(0, 29, 61);")
+        self.btnPlay.setStyleSheet("background-color: rgb(255, 214, 10);")
         self.btnPlay.setText("")
         self.btnPlay.setObjectName("btnPlay")
+
+        self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPlay))
         self.lTime = QtWidgets.QLabel(self.frame)
         self.lTime.setGeometry(QtCore.QRect(570, 360, 72, 20))
         self.lTime.setStyleSheet("color: rgb(255, 255, 255);")
@@ -68,9 +77,9 @@ class ConfigScreen(object):
         self.lTime.setObjectName("lTime")
         self.btnStop = QtWidgets.QPushButton(self.frame)
         self.btnStop.setGeometry(QtCore.QRect(30, 360, 24, 24))
-        self.btnStop.setStyleSheet("background-color: rgb(0, 29, 61);")
+        self.btnStop.setStyleSheet("background-color: rgb(255, 214, 10);")
         self.btnStop.setText("")
-        # TODO: Set button icons
+        self.btnStop.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaStop))
 
         self.btnCancel = QtWidgets.QPushButton(self.centralwidget)
         self.btnCancel.setGeometry(QtCore.QRect(0, 0, 85, 41))
@@ -209,8 +218,8 @@ class ConfigScreen(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Python Video Stabilization Project"))
-        self.checkBox_2.setText(_translate("MainWindow", "CheckBox"))
-        self.checkBox.setText(_translate("MainWindow", "CheckBox"))
+        self.cbAudio.setText(_translate("MainWindow", "Enable Audio"))
+        self.cbGreyscale.setText(_translate("MainWindow", "Greyscale"))
         self.btnCancel.setText(_translate("MainWindow", "Cancel"))
         self.btnSelect.setText(_translate("MainWindow", "Select Object"))
         self.lMode.setText(_translate("MainWindow", "Object Selection Mode"))
@@ -241,16 +250,15 @@ class ConfigScreen(object):
     def _stop(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.stop()
+    def _forceStop(self):
+        self.mediaPlayer.stop()
 
     def _mediaStateChanged(self, state):
-        # TODO: Icon change
-        None
-        # if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-        #     self.playButton.setIcon(
-        #             self.style().standardIcon(QStyle.SP_MediaPause))
-        # else:
-        #     self.playButton.setIcon(
-        #             self.style().standardIcon(QStyle.SP_MediaPlay))
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPause))
+        else:
+            self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPlay))
+
 
     def _positionChanged(self, position):
         self.positionSlider.blockSignals(True)

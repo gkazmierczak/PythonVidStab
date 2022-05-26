@@ -23,6 +23,13 @@ def convertToGreyscale(inputVideoPath: str, outputVideoName: str, compress: bool
         if compress:
             repackVideo(outputVideoName)
 
+def convertFramesToGreyscale(frames: List) -> None:
+    for i in range(len(frames)):
+        frames[i] = cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY)
+
+def createVideoCapture(inputVideoPath: str) -> cv2.VideoCapture:
+    return cv2.VideoCapture(inputVideoPath)
+
 
 def videoToFrameList(videoCapture: VideoCapture) -> List:
     frames = []
