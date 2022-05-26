@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import QDir, Qt, QUrl
+from PyQt5.QtWidgets import QStyle
 from utils import durationFromMs
 
 class ResultScreen(object):
@@ -29,7 +30,6 @@ class ResultScreen(object):
 "font: 24pt \"MS Shell Dlg 2\";")
         self.lStatus.setAlignment(QtCore.Qt.AlignCenter)
         self.lStatus.setObjectName("lStatus")
-
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(320, 100, 641, 381))
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -45,9 +45,10 @@ class ResultScreen(object):
         self.positionSlider.setObjectName("horizontalSlider")
         self.btnPlay = QtWidgets.QPushButton(self.frame)
         self.btnPlay.setGeometry(QtCore.QRect(0, 360, 24, 24))
-        self.btnPlay.setStyleSheet("background-color: rgb(0, 29, 61);")
+        self.btnPlay.setStyleSheet("background-color: rgb(255, 195, 0);")
         self.btnPlay.setText("")
         self.btnPlay.setObjectName("btnPlay")
+        self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPlay))
         self.lTime = QtWidgets.QLabel(self.frame)
         self.lTime.setGeometry(QtCore.QRect(570, 360, 72, 20))
         self.lTime.setStyleSheet("color: rgb(255, 255, 255);")
@@ -55,9 +56,9 @@ class ResultScreen(object):
         self.lTime.setObjectName("lTime")
         self.btnStop = QtWidgets.QPushButton(self.frame)
         self.btnStop.setGeometry(QtCore.QRect(30, 360, 24, 24))
-        self.btnStop.setStyleSheet("background-color: rgb(0, 29, 61);")
+        self.btnStop.setStyleSheet("background-color: rgb(255, 195, 0);")
         self.btnStop.setText("")
-
+        self.btnStop.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaStop))
         self.btnRestart = QtWidgets.QPushButton(self.centralwidget)
         self.btnRestart.setGeometry(QtCore.QRect(460, 520, 130, 40))
         self.btnRestart.setStyleSheet("background-color: rgb(0, 29, 61);\n"
@@ -130,14 +131,11 @@ class ResultScreen(object):
         self.mediaPlayer.stop()
 
     def _mediaStateChanged(self, state):
-        # TODO: Icon change
-        None
-        # if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-        #     self.playButton.setIcon(
-        #             self.style().standardIcon(QStyle.SP_MediaPause))
-        # else:
-        #     self.playButton.setIcon(
-        #             self.style().standardIcon(QStyle.SP_MediaPlay))
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPause))
+        else:
+            self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPlay))
+
 
     def _positionChanged(self, position):
         self.positionSlider.blockSignals(True)
