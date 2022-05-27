@@ -37,6 +37,13 @@ class ConfigScreen(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
+
+        self.cbShowTracking = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.cbShowTracking.setObjectName("cbShowTracking")
+        self.cbShowTracking.setStyleSheet("margin-left:50px")
+        self.cbShowTracking.setChecked(False)
+        self.verticalLayout.addWidget(self.cbShowTracking)
+
         self.cbAudio = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.cbAudio.setObjectName("cbAudio")
         self.cbAudio.setStyleSheet("margin-left:50px")
@@ -246,6 +253,7 @@ class ConfigScreen(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Python Video Stabilization Project"))
+        self.cbShowTracking.setText(_translate("MainWindow", "Show tracking"))
         self.cbAudio.setText(_translate("MainWindow", "Enable Audio"))
         self.cbGreyscale.setText(_translate("MainWindow", "Greyscale"))
         self.btnCancel.setText(_translate("MainWindow", "Cancel"))

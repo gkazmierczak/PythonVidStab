@@ -7,11 +7,6 @@ from tkinter import Tk, messagebox
 from tkinter.filedialog import askopenfilename, asksaveasfile
 
 if __name__ == "__main__":
-    # data = trackMultiple(capture, selectMultipleBoundingBoxes(capture), "CSRT", display=True)
-
-    # print("????")
-    # stabilizer = Stabilizer(data)
-
     Tk().withdraw()
     input_file_path = askopenfilename(title="Select file to convert")
     if input_file_path == "":
@@ -30,9 +25,9 @@ if __name__ == "__main__":
     print("LEN: ", len(frames))
     print(frames[0].shape)
 
-    tracker = Tracker(frames)
+    tracker = Tracker(frames, yolo=True)
 
-    data = tracker.track('KCF', True)
+    data = tracker.track('KCF', False)
     print("LEN: ", len(data))
     [print(x) for x in data]
 
