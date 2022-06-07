@@ -55,6 +55,7 @@ class MainWindow(QMainWindow):
             self.start_config_screen()
 
     def _roi_selection(self):
+        self.config_screen.button_select.clicked.disconnect(self._roi_selection)
         self.config_screen._force_stop()
         is_manual_enabled = self.config_screen.radio_manual_object_selection.isChecked()
         self.video_capture = video_utils.create_video_capture(self.input_file_path)
@@ -66,6 +67,8 @@ class MainWindow(QMainWindow):
 
         if self.tracker.bbox != (0, 0, 0, 0):
             self.stabilize_file(self.config_screen.radius_slider.value())
+        else:
+            self.config_screen.button_select.clicked.connect(self._roi_selection)
 
     def _getTrackingMode(self):
         modes = ["CSRT", "KCF", "MOSSE"]
