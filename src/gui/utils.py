@@ -1,4 +1,4 @@
-def durationFromMs(ms):
+def duration_from_ms(ms):
     s = ms // 1000
     mm = s // 60
     s = s % 60

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import os
 
 class Stabilizer:
     def __init__(self, frames, data):
@@ -40,7 +40,8 @@ class Stabilizer:
         if generate_plots:
             plt.subplot(2, 1, 2)
             plt.plot([x[0] for x in trajectory], [x[1] for x in trajectory], marker='.', color='g')
-            plt.savefig("../plots/trajectory_smooth.png")
+            path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../plots/trajectory_smooth.png'))
+            plt.savefig(path)
 
         margin_x = min(np.min(trajectory[:, 0]), np.min(width - trajectory[:, 0])) - 1
         margin_y = min(np.min(trajectory[:, 1]), np.min(height - trajectory[:, 1])) - 1

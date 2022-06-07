@@ -1,47 +1,39 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file '.\titlescreen.ui'
-#
-# Created by: PyQt5 UI code generator 5.9.2
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class TitleScreen(object):
-    def setupUi(self, MainWindow):
+    def setup_ui(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
         MainWindow.setAutoFillBackground(False)
         MainWindow.setStyleSheet("background-color: rgb(0, 8, 20);")
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.labelStart = QtWidgets.QLabel(self.centralwidget)
-        self.labelStart.setGeometry(QtCore.QRect(285, 10, 709, 58))
+        self.central_widget = QtWidgets.QWidget(MainWindow)
+        self.central_widget.setObjectName("centralwidget")
+        self.label_start = QtWidgets.QLabel(self.central_widget)
+        self.label_start.setGeometry(QtCore.QRect(285, 10, 709, 58))
         font = QtGui.QFont()
         font.setPointSize(36)
-        self.labelStart.setFont(font)
-        self.labelStart.setStyleSheet("color: rgb(255, 195, 0);")
-        self.labelStart.setObjectName("labelStart")
-        self.labelStatus = QtWidgets.QLabel(self.centralwidget)
-        self.labelStatus.setGeometry(QtCore.QRect(480, 240, 320, 33))
+        self.label_start.setFont(font)
+        self.label_start.setStyleSheet("color: rgb(255, 195, 0);")
+        self.label_start.setObjectName("labelStart")
+        self.label_status = QtWidgets.QLabel(self.central_widget)
+        self.label_status.setGeometry(QtCore.QRect(480, 240, 320, 33))
         font = QtGui.QFont()
         font.setPointSize(20)
-        self.labelStatus.setFont(font)
-        self.labelStatus.setStyleSheet("color: rgb(255, 255, 255);")
-        self.labelStatus.setObjectName("labelStatus")
-        self.selectBtn = QtWidgets.QPushButton(self.centralwidget)
-        self.selectBtn.setGeometry(QtCore.QRect(565, 335, 151, 47))
+        self.label_status.setFont(font)
+        self.label_status.setStyleSheet("color: rgb(255, 255, 255);")
+        self.label_status.setObjectName("labelStatus")
+        self.button_select = QtWidgets.QPushButton(self.central_widget)
+        self.button_select.setGeometry(QtCore.QRect(565, 335, 151, 47))
         font = QtGui.QFont()
         font.setPointSize(20)
-        self.selectBtn.setFont(font)
-        self.selectBtn.setStyleSheet("background-color: rgb(0, 29, 61);\n"
+        self.button_select.setFont(font)
+        self.button_select.setStyleSheet("background-color: rgb(0, 29, 61);\n"
                                      "alternate-background-color: rgb(0, 53, 102);\n"
                                      "color: rgb(255, 195, 0);\n"
                                      "border-color: rgb(255, 195, 0);")
-        self.selectBtn.setObjectName("selectBtn")
-        MainWindow.setCentralWidget(self.centralwidget)
+        self.button_select.setObjectName("selectBtn")
+        MainWindow.setCentralWidget(self.central_widget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1280, 21))
         self.menubar.setObjectName("menubar")
@@ -50,13 +42,13 @@ class TitleScreen(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
+        self.retranslate_ui(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, MainWindow):
+    def retranslate_ui(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Python Video Stabilization Project"))
-        self.labelStart.setText(_translate("MainWindow", "Python Video Stabilization Project"))
-        self.labelStatus.setText(_translate("MainWindow", "Please select a file to begin"))
-        self.selectBtn.setText(_translate("MainWindow", "Select File"))
+        self.label_start.setText(_translate("MainWindow", "Python Video Stabilization Project"))
+        self.label_status.setText(_translate("MainWindow", "Please select a file to begin"))
+        self.button_select.setText(_translate("MainWindow", "Select File"))
 

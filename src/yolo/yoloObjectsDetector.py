@@ -1,10 +1,11 @@
 import numpy as np
 import time
 import cv2
+import os
 
 
 class YoloObjectsDetector:
-    def __init__(self, image, yolo_path="./yolo", min_confidence=0.5, threshold=0.3):
+    def __init__(self, image, yolo_path=None, min_confidence=0.5, threshold=0.3):
         self.image = image
 
         # get image height and width
@@ -12,6 +13,8 @@ class YoloObjectsDetector:
         self.width = self.image.shape[1]
 
         # load yolo model labels and set paths to yolo weights and config
+        if yolo_path is None:
+           yolo_path = os.path.abspath(os.path.dirname(__file__))
         self.labels = open(yolo_path + "/coco.names").read().strip().split("\n")
         self.weights_path = yolo_path + "/yolov3.weights"
         self.config_path = yolo_path + "/yolov3.cfg"

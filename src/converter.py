@@ -79,3 +79,13 @@ def repack_video(video_path):
     ffmpeg.input(video_path).output(tempfile_name, vcodec="libx264").run()
     shutil.move(tempfile_name, video_path)
     shutil.rmtree(tempdir_path)
+
+def contains_audio(video_path):
+    """
+        Check if video has an audio track.
+        @param video_path: str - Path to tested video
+        Returns:
+            bool - True if video has an audio track.
+    """
+    probe=ffmpeg.probe(video_path,select_streams='a')
+    return probe['streams']
