@@ -10,7 +10,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QMovie
-from scrollableLabel import ScrollableLabel
+from .scrollableLabel import ScrollableLabel
+
 
 class LoadingScreen(object):
     def setupUi(self, MainWindow):
@@ -22,7 +23,7 @@ class LoadingScreen(object):
         self.lStatus = QtWidgets.QLabel(self.centralwidget)
         self.lStatus.setGeometry(QtCore.QRect(415, 60, 451, 40))
         self.lStatus.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: 24pt \"MS Shell Dlg 2\";")
+                                   "font: 24pt \"MS Shell Dlg 2\";")
         self.lStatus.setObjectName("lStatus")
         self.lAnim = QtWidgets.QLabel(self.centralwidget)
         self.lAnim.setGeometry(QtCore.QRect(440, 160, 400, 400))
@@ -31,9 +32,9 @@ class LoadingScreen(object):
         self.btnCancel = QtWidgets.QPushButton(self.centralwidget)
         self.btnCancel.setGeometry(QtCore.QRect(0, 0, 90, 40))
         self.btnCancel.setStyleSheet("background-color: rgb(0, 29, 61);\n"
-"border: 1px solid rgb(255, 195, 0);\n"
-"color: rgb(255, 195, 0);\n"
-"font: 20pt \"MS Shell Dlg 2\";")
+                                     "border: 1px solid rgb(255, 195, 0);\n"
+                                     "color: rgb(255, 195, 0);\n"
+                                     "font: 20pt \"MS Shell Dlg 2\";")
         self.btnCancel.setObjectName("btnCancel")
         self.scrollableLabel = ScrollableLabel(parent=self.centralwidget)
 
@@ -54,8 +55,9 @@ class LoadingScreen(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.movie = QMovie("../resource/loading.gif")
+        self.movie.setScaledSize(QtCore.QSize(400, 400))
         self.lAnim.setMovie(self.movie)
-  
+
         self.startAnimation()
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -68,20 +70,11 @@ class LoadingScreen(object):
 
     def startAnimation(self):
         self.movie.start()
-  
+
     # Stop Animation(According to need)
     def stopAnimation(self):
         self.movie.stop()
-    
-    def appendText(self,text):
+
+    def appendText(self, text):
         self.scrollableLabel.appendText(text)
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = LoadingScreen()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

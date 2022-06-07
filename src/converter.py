@@ -1,67 +1,81 @@
 import cv2
 import ffmpeg
-from typing import List
-from cv2 import VideoCapture
 import tempfile
 import shutil
 
 
-def convertToGreyscale(inputVideoPath: str, outputVideoName: str, compress: bool) -> None:
-    videoCapture = cv2.VideoCapture(inputVideoPath)
-    inputFramerate = videoCapture.get(cv2.CAP_PROP_FPS)
-    frames = videoToFrameList(videoCapture)
-    for i in range(len(frames)):
-        frames[i] = cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY)
-    if ffmpeg.probe(inputVideoPath, select_streams='a')['streams']:
-        tempdirPath = tempfile.mkdtemp()
-        tempfileName = tempdirPath + "\\tempfile.mp4"
-        writeVideoToFile(tempfileName, frames, inputFramerate, iscolor=False)
-        muxVideoAudio(tempfileName, inputVideoPath, outputVideoName)
-        shutil.rmtree(tempdirPath)
-    else:
-        writeVideoToFile(outputVideoName, frames, inputFramerate, iscolor=False)
-        if compress:
-            repackVideo(outputVideoName)
-
-
-def convertFramesToGreyscale(frames: List) -> None:
+def convert_frames_to_greyscale(frames):
+    """
+    Converts video frames to greyscale
+    @param frames: list - List of video frames
+    """
     for i in range(len(frames)):
         frames[i] = cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY)
 
 
-def createVideoCapture(inputVideoPath: str) -> cv2.VideoCapture:
-    return cv2.VideoCapture(inputVideoPath)
+def create_video_capture(input_video_path):
+    """
+    Creates cv2.VideoCapture object of given video file.
+    @param input_video_path: str - Input video file path
+
+    Returns:
+        cv2.VideoCapture object of video given by path
+    """
+    return cv2.VideoCapture(input_video_path)
 
 
-def videoToFrameList(videoCapture: VideoCapture) -> List:
+def video_to_frame_list(video_capture):
+    """
+    Reads frames from cv2.VideoCapture object.
+    @param video_capture: cv2.VideoCapture - VideoCapture object
+
+    Returns:
+        List containing video frames
+    """
     frames = []
-    ret, frame = videoCapture.read()
+    ret, frame = video_capture.read()
     while ret:
         frames.append(frame)
-        ret, frame = videoCapture.read()
+        ret, frame = video_capture.read()
     return frames
 
 
-def writeVideoToFile(outputVideoName: str, frames: List, framerate: float, iscolor: bool = True) -> None:
+def write_video_to_file(output_video_name, frames, framerate, iscolor=True):
+    """
+    Writes video represented by frames to a file.
+    @param output_video_name: str -
+    @param frames: list -
+    @param framerate: float -
+    @param iscolor: bool -
+    """
     frameSize = (len(frames[0][0]), len(frames[0]))
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-    output = cv2.VideoWriter(outputVideoName, fourcc,
-                             framerate, frameSize, iscolor)
+    output = cv2.VideoWriter(output_video_name, fourcc, framerate, frameSize, iscolor)
+
     for frame in frames:
         output.write(frame)
     output.release()
 
 
-def muxVideoAudio(videofilePath: str, audiofilePath: str, outputVideoName: str) -> None:
-    inputVideo = ffmpeg.input(videofilePath)
-    inputAudio = ffmpeg.input(audiofilePath)
-    ffmpeg.concat(inputVideo, inputAudio, v=1, a=1).output(
-        outputVideoName, vcodec="libx264").overwrite_output().run()
+def mux_video_audio(videofile_path, audiofile_path, output_video_name):
+    """
+    Add audio to video file
+    @param videofile_path: str - Input video file path
+    @param audiofile_path: str - Input audio file path
+    @param output_video_name: str - Output video file path
+    """
+    input_video = ffmpeg.input(videofile_path)
+    input_audio = ffmpeg.input(audiofile_path)
+    ffmpeg.concat(input_video, input_audio, v=1, a=1).output(output_video_name, vcodec="libx264").overwrite_output().run()
 
 
-def repackVideo(videoPath: str) -> None:
-    tempdirPath = tempfile.mkdtemp()
-    tempfileName = tempdirPath + "\\tempfile.mp4"
-    ffmpeg.input(videoPath).output(tempfileName, vcodec="libx264").run()
-    shutil.move(tempfileName, videoPath)
-    shutil.rmtree(tempdirPath)
+def repack_video(video_path):
+    """
+    Compress video
+    @param video_path: str - Input video file path
+    """
+    tempdir_path = tempfile.mkdtemp()
+    tempfile_name = tempdir_path + "\\tempfile.mp4"
+    ffmpeg.input(video_path).output(tempfile_name, vcodec="libx264").run()
+    shutil.move(tempfile_name, video_path)
+    shutil.rmtree(tempdir_path)

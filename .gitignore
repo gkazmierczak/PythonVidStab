@@ -2,4 +2,4 @@
 __pycache__/
 
 /ENV
-/src/yolo
+/src/yolo/yolov3.weights

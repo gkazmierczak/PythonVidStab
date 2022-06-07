@@ -12,6 +12,13 @@ class Stabilizer:
         self.n = len(self.frames)
 
     def stabilize(self, smoothing_radius=10, generate_plots=False):
+        """
+        Stabilizes video (self.frames) based on tracker data saved in self.data.
+
+        @param smoothing_radius: int - Number of frames from which average will be taken to smoothen video
+        @param generate_plots: bool - Enable/disable smoothing plots generation
+        """
+
         width = self.frames[0].shape[1]
         height = self.frames[0].shape[0]
 
@@ -24,8 +31,6 @@ class Stabilizer:
             else:
                 non_zero = trajectory[i]
 
-        # [print(x) for x in trajectory]
-
         if generate_plots:
             plt.subplot(2, 1, 1)
             plt.plot([x[0] for x in trajectory], [x[1] for x in trajectory], marker='.', color='r')
@@ -35,7 +40,7 @@ class Stabilizer:
         if generate_plots:
             plt.subplot(2, 1, 2)
             plt.plot([x[0] for x in trajectory], [x[1] for x in trajectory], marker='.', color='g')
-            plt.savefig("../../plots/trajectory_smooth.png")
+            plt.savefig("../plots/trajectory_smooth.png")
 
         margin_x = min(np.min(trajectory[:, 0]), np.min(width - trajectory[:, 0])) - 1
         margin_y = min(np.min(trajectory[:, 1]), np.min(height - trajectory[:, 1])) - 1
@@ -46,6 +51,12 @@ class Stabilizer:
 
     @staticmethod
     def trajectory_smooth(trajectory, n):
+        """
+        Creates smoothen trajectory by taking an average of n frames.
+
+        @param trajectory: list - Trajectory to be smoothened
+        @param n: int - Number of frames from which average will be taken to smoothen trajectory
+        """
         curr_sum_x = np.sum(trajectory[:n, 0])
         curr_sum_y = np.sum(trajectory[:n, 1])
         x = []

@@ -11,12 +11,13 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import QDir, Qt, QUrl
 from PyQt5.QtWidgets import QStyle
-from utils import durationFromMs
+from .utils import durationFromMs
 
 
 class ConfigScreen(object):
     videoPath = None
-    playbackPausedBySliderEvent=False
+    playbackPausedBySliderEvent = False
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
@@ -67,23 +68,22 @@ class ConfigScreen(object):
         self.cbPlots.setStyleSheet("margin-left:50px")
         self.cbPlots.setChecked(False)
         self.verticalLayout.addWidget(self.cbPlots)
-        self.radiusFrame=QtWidgets.QFrame(self.verticalLayoutWidget)
+        self.radiusFrame = QtWidgets.QFrame(self.verticalLayoutWidget)
         self.radiusFrame.setFixedHeight(200)
         self.radiusSlider = QtWidgets.QSlider(self.radiusFrame)
         self.radiusSlider.setOrientation(QtCore.Qt.Horizontal)
         self.radiusSlider.setObjectName("radiusSlider")
-        self.radiusSlider.setGeometry(20,40,160,30)
-        self.radiusSlider.setRange(5,50)
+        self.radiusSlider.setGeometry(20, 40, 160, 30)
+        self.radiusSlider.setRange(5, 50)
         self.radiusSlider.setValue(30)
-        self.lRadius=QtWidgets.QLabel(self.radiusFrame)
+        self.lRadius = QtWidgets.QLabel(self.radiusFrame)
         self.lRadius.setAlignment(QtCore.Qt.AlignCenter)
-        self.lRadius.setGeometry(0,0,200,30)
-        self.lRadius.setText("Smoothing radius: "+str(self.radiusSlider.value()))
+        self.lRadius.setGeometry(0, 0, 200, 30)
+        self.lRadius.setText("Smoothing radius: " + str(self.radiusSlider.value()))
         self.lRadius.setStyleSheet("color: rgb(255, 255, 255);""font: 12pt \"MS Shell Dlg 2\";")
         self.lRadius.setMargin(0)
         self.radiusSlider.valueChanged.connect(self._updateRadius)
-        self.verticalLayout.addWidget(self.radiusFrame)    
-
+        self.verticalLayout.addWidget(self.radiusFrame)
 
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(320, -1, 641, 381))
@@ -126,9 +126,9 @@ class ConfigScreen(object):
         self.btnSelect = QtWidgets.QPushButton(self.centralwidget)
         self.btnSelect.setGeometry(QtCore.QRect(550, 650, 220, 50))
         self.btnSelect.setStyleSheet("background-color: rgb(0, 29, 61);\n"
-                                        "font: 26pt \"MS Shell Dlg 2\";\n"
-                                        "color: rgb(255, 195, 0);\n"
-                                        "border: 1px solid rgb(255, 214, 10);")
+                                     "font: 26pt \"MS Shell Dlg 2\";\n"
+                                     "color: rgb(255, 195, 0);\n"
+                                     "border: 1px solid rgb(255, 214, 10);")
         self.btnSelect.setObjectName("btnSelect")
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(340, 385, 600, 251))
@@ -268,8 +268,8 @@ class ConfigScreen(object):
         self.radioAIObjectDetection.setText(
             _translate("MainWindow", "AI Object Detection"))
 
-    def _updateRadius(self,radius):
-        self.lRadius.setText("Smoothing radius: "+str(radius))
+    def _updateRadius(self, radius):
+        self.lRadius.setText("Smoothing radius: " + str(radius))
 
     def _setMedia(self):
         self.mediaPlayer.setMedia(QMediaContent(
@@ -289,6 +289,7 @@ class ConfigScreen(object):
     def _stop(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.stop()
+
     def _forceStop(self):
         self.mediaPlayer.stop()
 
@@ -297,7 +298,6 @@ class ConfigScreen(object):
             self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPause))
         else:
             self.btnPlay.setIcon(self.centralwidget.style().standardIcon(QStyle.SP_MediaPlay))
-
 
     def _positionChanged(self, position):
         self.positionSlider.blockSignals(True)
@@ -325,12 +325,3 @@ class ConfigScreen(object):
         if self.playbackPausedBySliderEvent:
             self.mediaPlayer.play()
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = ConfigScreen()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

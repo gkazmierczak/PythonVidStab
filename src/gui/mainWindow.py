@@ -3,10 +3,10 @@ import cv2
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QFileDialog
 from PyQt5.QtMultimedia import QMediaContent
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
-from configScreen import ConfigScreen
-from resultScreen import ResultScreen
-from titleScreen import TitleScreen
-from loadingScreen import LoadingScreen
+from .configScreen import ConfigScreen
+from .resultScreen import ResultScreen
+from .titleScreen import TitleScreen
+from .loadingScreen import LoadingScreen
 from src.tracker import Tracker
 from src.stabilizer import Stabilizer
 import src.converter as videoUtils
@@ -59,8 +59,8 @@ class MainWindow(QMainWindow):
     def _roiSelection(self):
         self.configScreen._forceStop()
         isManualEnabled = self.configScreen.radioManualObjectSelection.isChecked()
-        self.videoCapture = videoUtils.createVideoCapture(self.inputFilePath)
-        videoFrames = videoUtils.videoToFrameList(self.videoCapture)
+        self.videoCapture = videoUtils.create_video_capture(self.inputFilePath)
+        videoFrames = videoUtils.video_to_frame_list(self.videoCapture)
         if isManualEnabled:
             self.tracker = Tracker(videoFrames)
         else:
@@ -110,25 +110,25 @@ class MainWindow(QMainWindow):
 
         print(self.outputOptions)
         if self.outputOptions['greyscale']:
-            videoUtils.convertFramesToGreyscale(self.tracker.frames)
+            videoUtils.convert_frames_to_greyscale(self.tracker.frames)
 
         if self.outputOptions['audio']:
             tempdirPath = tempfile.mkdtemp()
             tempfileName = tempdirPath + "\\tempfile.mp4"
-            videoUtils.writeVideoToFile(tempfileName, self.tracker.frames, self.videoCapture.get(cv2.CAP_PROP_FPS),
-                                        iscolor=not self.outputOptions['greyscale'])
-            videoUtils.muxVideoAudio(tempfileName, self.inputFilePath, self.outputFilePath)
+            videoUtils.write_video_to_file(tempfileName, self.tracker.frames, self.videoCapture.get(cv2.CAP_PROP_FPS),
+                                           iscolor=not self.outputOptions['greyscale'])
+            videoUtils.mux_video_audio(tempfileName, self.inputFilePath, self.outputFilePath)
             shutil.rmtree(tempdirPath)
         else:
             if self.outputOptions['compress']:
-                videoUtils.writeVideoToFile(self.outputFilePath, self.tracker.frames,
-                                            self.videoCapture.get(cv2.CAP_PROP_FPS),
-                                            not self.outputOptions['greyscale'])
-                videoUtils.repackVideo(self.outputFilePath)
+                videoUtils.write_video_to_file(self.outputFilePath, self.tracker.frames,
+                                               self.videoCapture.get(cv2.CAP_PROP_FPS),
+                                               not self.outputOptions['greyscale'])
+                videoUtils.repack_video(self.outputFilePath)
             else:
-                videoUtils.writeVideoToFile(self.outputFilePath, self.tracker.frames,
-                                            self.videoCapture.get(cv2.CAP_PROP_FPS),
-                                            not self.outputOptions['greyscale'])
+                videoUtils.write_video_to_file(self.outputFilePath, self.tracker.frames,
+                                               self.videoCapture.get(cv2.CAP_PROP_FPS),
+                                               not self.outputOptions['greyscale'])
 
         self.loadingScreen.appendText(f"Saved output as {self.outputFilePath}")
         self.startResultScreen()
@@ -169,8 +169,3 @@ class Worker(QThread):
         except Exception as e:
             self.err_sig.emit(str(e))
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    w = MainWindow()
-    sys.exit(app.exec_())

@@ -4,22 +4,23 @@ import cv2
 
 
 class YoloObjectsDetector:
-    def __init__(self, image, yolo_path="../yolo", confidence=0.5, threshold=0.3):
+    def __init__(self, image, yolo_path="./yolo", min_confidence=0.5, threshold=0.3):
         self.image = image
+
+        # get image height and width
         self.height = self.image.shape[0]
         self.width = self.image.shape[1]
 
-        # load the COCO class labels our YOLO model was trained on
-        # derive the paths to the YOLO weights and model configuration
+        # load yolo model labels and set paths to yolo weights and config
         self.labels = open(yolo_path + "/coco.names").read().strip().split("\n")
         self.weights_path = yolo_path + "/yolov3.weights"
         self.config_path = yolo_path + "/yolov3.cfg"
 
-        # load confidence and threshold level
-        self.confidence = confidence
+        # set confidence and threshold level
+        self.min_confidence = min_confidence
         self.threshold = threshold
 
-        # initialize a list of colors to represent each possible class label
+        # initialize a list of colors to represent class labels
         self.colors = np.random.randint(0, 255, size=(len(self.labels), 3), dtype="uint8")
 
     def get_selected_object_bounding_box(self):
@@ -29,31 +30,29 @@ class YoloObjectsDetector:
         return bbox
 
     def load_run_model(self):
-        # load our YOLO object detector trained on COCO dataset (80 classes)
-        print("[INFO] loading YOLO from disk...")
+        # load YOLO object detector trained on COCO dataset
+        print("Loading YOLO from disk...")
         net = cv2.dnn.readNetFromDarknet(self.config_path, self.weights_path)
 
-        # determine only the *output* layer names that we need from YOLO
         ln = net.getLayerNames()
         ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
 
-        # construct a blob from the input image and then perform a forward
-        # pass of the YOLO object detector, giving us our bounding boxes and
-        # associated probabilities
+        # construct a blob from the image and set as input
         blob = cv2.dnn.blobFromImage(self.image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         net.setInput(blob)
+
+        # perform a forward pass of the YOLO object detector, giving
+        # bboxes of detected objects and associated probabilities
         start = time.time()
         outputs = net.forward(ln)
         end = time.time()
 
-        # show timing information on YOLO
-        print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+        print(f"YOLO objects detecting took {round(end - start, 4)} seconds")
 
         return outputs
 
     def generate_bounding_boxes(self, layerOutputs):
-        # initialize our lists of detected bounding boxes, confidences, and
-        # class IDs, respectively
+        # initialize lists of detected bboxes, confidences, and class IDs
         boxes = []
         confidences = []
         classIDs = []
@@ -62,29 +61,22 @@ class YoloObjectsDetector:
         for output in layerOutputs:
             # loop over each of the detections
             for detection in output:
-                # extract the class ID and confidence (i.e., probability) of
-                # the current object detection
+                # get the class ID and confidence of the current object detection
                 scores = detection[5:]
                 classID = np.argmax(scores)
                 confidence = scores[classID]
 
-                # filter out weak predictions by ensuring the detected
-                # probability is greater than the minimum probability
-                if confidence > self.confidence:
-                    # scale the bounding box coordinates back relative to the
-                    # size of the image, keeping in mind that YOLO actually
-                    # returns the center (x, y)-coordinates of the bounding
-                    # box followed by the boxes' width and height
+                # filter objects with confidence smaller than minimum given as class parameter
+                if confidence > self.min_confidence:
+                    # scale the bounding box coordinates back relative to the size of the image
                     box = detection[0:4] * np.array([self.width, self.height, self.width, self.height])
                     (centerX, centerY, width, height) = box.astype("int")
 
-                    # use the center (x, y)-coordinates to derive the top and
-                    # and left corner of the bounding box
+                    # get coordinates of top left corner of the bbox
                     x = int(centerX - (width / 2))
                     y = int(centerY - (height / 2))
 
-                    # update our list of bounding box coordinates, confidences,
-                    # and class IDs
+                    # update list of bboxes, confidences, and class IDs
                     boxes.append([x, y, int(width), int(height)])
                     confidences.append(float(confidence))
                     classIDs.append(classID)
@@ -92,22 +84,25 @@ class YoloObjectsDetector:
         return boxes, confidences, classIDs
 
     def paint_box_on_object(self, box, color, label, confidence):
-        # unpack the coordinates of the box
+        # unpack coordinates
         x, y, w, h = box[0], box[1], box[2], box[3]
 
-        # draw a bounding box rectangle and label on the image
+        # draw a bounding box and label on the image
         cv2.rectangle(self.image, (x, y), (x + w, y + h), color, 2)
         text = "{}: {:.4f}".format(label, confidence)
         cv2.putText(self.image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
     def get_bbox_from_image(self, boxes, confidences, classIDs):
         # apply non-maxima suppression to suppress weak, overlapping bounding boxes
-        indexes = cv2.dnn.NMSBoxes(boxes, confidences, self.confidence, self.threshold)
+        indexes = cv2.dnn.NMSBoxes(boxes, confidences, self.min_confidence, self.threshold)
         n = len(indexes)
 
+        # creat lists of filtered bboxes, confidences and classIDs
         boxes = [boxes[i] for i in indexes]
         confidences = [confidences[i] for i in indexes]
         classIDs = [classIDs[i] for i in indexes]
+
+        # create list containing center of each bounding box
         centers = np.array([[int(bbox[0] + bbox[2] / 2), int(bbox[1] + bbox[3] / 2)] for bbox in boxes])
 
         if len(boxes) == 0:
@@ -115,6 +110,7 @@ class YoloObjectsDetector:
         if len(boxes) == 1:
             return boxes[0]
 
+        # list of selected bboxes
         selected = []
 
         for i in range(n):
@@ -123,6 +119,7 @@ class YoloObjectsDetector:
             confidence = confidences[i]
             self.paint_box_on_object(boxes[i], color, label, confidence)
 
+        # on mouse event function to select bbox
         def onMouse(event, x, y, flags, param):
             nonlocal selected
 
@@ -131,7 +128,7 @@ class YoloObjectsDetector:
                 selected_index = np.argmin(np.linalg.norm(centers - np.array([x, y]), axis=1))
                 selected = boxes[selected_index]
 
-        # show image to select bbox
+        # show image and set onMouse event to select bbox
         cv2.imshow("Image", self.image)
         cv2.setMouseCallback('Image', onMouse)
 
